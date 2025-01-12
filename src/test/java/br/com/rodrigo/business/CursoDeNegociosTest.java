@@ -4,6 +4,7 @@ import br.com.rodrigo.service.CursoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,14 +16,14 @@ import static org.mockito.Mockito.*;
 class CursoDeNegociosTest {
     CursoService cursoServiceMock;
     CursoDeNegocios cursoDeNegocios;
-    List<String> listaDeCursosSpringBootFiltrado;
+    List<String> listaDeCursosDoAluno;
 
     @BeforeEach
     void beforeEachMethod() {
         //Arrange /Given
         cursoServiceMock = mock(CursoService.class);
         cursoDeNegocios = new CursoDeNegocios(cursoServiceMock);
-        listaDeCursosSpringBootFiltrado = Arrays.asList(
+        listaDeCursosDoAluno = Arrays.asList(
                 "REST API's RESTFul do 0 à Azure com ASP.NET Core 5 e Docker",
                 "Agile Desmistificado com Scrum, XP, Kanban e Trello",
                 "Spotify Engineering Culture Desmistificado",
@@ -42,7 +43,7 @@ class CursoDeNegociosTest {
     void buscandoTodosOsCursosDeSpringBootOndeOEstudanteEstaInscrito() {
 //Arrange / Given
         given(cursoServiceMock.recuperarCursos("Rodrigo"))
-                .willReturn(listaDeCursosSpringBootFiltrado);
+                .willReturn(listaDeCursosDoAluno);
 
         //When / Act
         List<String> filtrandoTodosOsCursos = cursoDeNegocios
@@ -58,7 +59,7 @@ class CursoDeNegociosTest {
 
         //Arrange / Given
         given(cursoServiceMock.recuperarCursos("Rodrigo"))
-                .willReturn(listaDeCursosSpringBootFiltrado);
+                .willReturn(listaDeCursosDoAluno);
         //When / Act
         cursoDeNegocios.deletarCursosQueNaoSaoRelacionadosASpringBoot("Rodrigo"); //esse método retorna void
 
@@ -68,5 +69,27 @@ class CursoDeNegociosTest {
         verify(cursoServiceMock).deletarCurso("Agile Desmistificado com Scrum, XP, Kanban e Trello");
         verify(cursoServiceMock, never())
                 .deletarCurso("REST API's RESTFul do 0 à AWS com Spring Boot 3 Kotlin e Docker"); // o never() indica que esse verify nunca deve ser chamado quando tiver o nome "Spring"
+    }
+
+    @Test
+    @DisplayName("TestandoDeletarCursosQueNãoSãoRelacionadosASpringBoot_Quando_PassandoOArgumentCaptor")
+    void deletarCursosQueNaoSaoRelacionadosASpringBoot_cenario2() {
+
+
+        //Arrange / Given
+        given(cursoServiceMock.recuperarCursos("Rodrigo"))
+                .willReturn(listaDeCursosDoAluno);
+        String cursoAzure = "REST API's RESTFul do 0 à Azure com ASP.NET Core 5 e Docker";
+        //passando o argumentCaptor que capturar os argumentos que sao passados como parametro
+        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        //When / Act
+        cursoDeNegocios.deletarCursosQueNaoSaoRelacionadosASpringBoot("Rodrigo"); //esse método retorna void
+
+        //Then / Assert
+        //Testando com Verify ( o Verify faz verfificações quando o metodo a ser testado retorna void
+        verify(cursoServiceMock, times(7)).deletarCurso(argumentCaptor.capture());//verificando se o mockService deletou o curso passado como parametro de um argument captor mockado
+        assertEquals(argumentCaptor.getAllValues().get(0), cursoAzure);
+        assertEquals(argumentCaptor.getAllValues().size(), 7); //verificando os cursos não relacionados a spring que não foram deletados
+
     }
 }
