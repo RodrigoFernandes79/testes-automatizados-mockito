@@ -1,4 +1,4 @@
-package br.com.rodrigo;
+package br.com.rodrigo.business;
 
 import br.com.rodrigo.service.CursoService;
 
