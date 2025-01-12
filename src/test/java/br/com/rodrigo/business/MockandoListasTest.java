@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -57,6 +56,23 @@ public class MockandoListasTest {
         var stringAtual = mockList2.get(0);
         // Then / Assertion
         assertEquals("Rodrigo", stringAtual);
+        assertNull(mockList2.get(1));
+    }
+
+    @Test
+    @DisplayName("TestDeMockComListas_Quando_ChamarOGetNaPosicao0_DeveRetornarUmaException")
+    public void TestDeMockComListas_cenario04() {
+//Arrange / Given
+        List<String> mockList2 = mock(List.class);
+        given(mockList2.get(0)).willThrow(new RuntimeException("Lançando uma Exception"));
+
+        //Then / Assertion
+        assertThrows(RuntimeException.class,
+                //When / Act
+                () -> {
+                    mockList2.get(0);
+                },
+                () -> "Deveria retornar uma exceção");
         assertNull(mockList2.get(1));
     }
 }
