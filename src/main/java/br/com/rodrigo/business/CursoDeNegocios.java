@@ -20,12 +20,23 @@ public class CursoDeNegocios {
         List<String> listaDeCursosSpringBootFiltrado = new ArrayList<>();
         List<String> filtrandoTodosOsCursos = cursoService.recuperarCursos(aluno);
 
-        for (String cursoSpringBoot : filtrandoTodosOsCursos) {
-            if (cursoSpringBoot.contains("Spring")) {
-                listaDeCursosSpringBootFiltrado.add(cursoSpringBoot);
+        for (String curso : filtrandoTodosOsCursos) {
+            if (curso.contains("Spring")) {
+                listaDeCursosSpringBootFiltrado.add(curso);
             }
         }
         return listaDeCursosSpringBootFiltrado;
+    }
+
+    public void deletarCursosQueNaoSaoRelacionadosASpringBoot(String aluno) {
+
+        List<String> filtrandoTodosOsCursos = cursoService.recuperarCursos(aluno);
+        for (String curso : filtrandoTodosOsCursos) {
+            if (!curso.contains("Spring")) {
+                cursoService.deletarCurso(curso);
+            }
+        }
+
     }
 
 

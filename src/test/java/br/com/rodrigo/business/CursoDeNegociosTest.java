@@ -10,8 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class CursoDeNegociosTest {
     CursoService cursoServiceMock;
@@ -50,5 +49,24 @@ class CursoDeNegociosTest {
                 .buscandoTodosOsCursosDeSpringBootOndeOEstudanteEstaInscrito("Rodrigo");
         //Then / Assert
         assertEquals(4, filtrandoTodosOsCursos.size());
+    }
+
+    @Test
+    @DisplayName("TestandoDeletarCursosQueNãoSãoRelacionadosASpringBoot_Quando_UsandoVerify")
+    void deletarCursosQueNaoSaoRelacionadosASpringBoot() {
+
+
+        //Arrange / Given
+        given(cursoServiceMock.recuperarCursos("Rodrigo"))
+                .willReturn(listaDeCursosSpringBootFiltrado);
+        //When / Act
+        cursoDeNegocios.deletarCursosQueNaoSaoRelacionadosASpringBoot("Rodrigo"); //esse método retorna void
+
+        //Then / Assert
+        //Testando com Verify ( o Verify faz verfificações quando o metodo a ser testado retorna void
+        verify(cursoServiceMock).deletarCurso("REST API's RESTFul do 0 à Azure com ASP.NET Core 5 e Docker");//verificando se o mockService deletou o curso
+        verify(cursoServiceMock).deletarCurso("Agile Desmistificado com Scrum, XP, Kanban e Trello");
+        verify(cursoServiceMock, never())
+                .deletarCurso("REST API's RESTFul do 0 à AWS com Spring Boot 3 Kotlin e Docker"); // o never() indica que esse verify nunca deve ser chamado quando tiver o nome "Spring"
     }
 }
