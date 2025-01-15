@@ -4,7 +4,14 @@ import br.com.rodrigo.service.CursoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,17 +19,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-
+@ExtendWith(MockitoExtension.class)
 class CursoDeNegociosTest {
+    @Mock
     CursoService cursoServiceMock;
+    @InjectMocks
     CursoDeNegocios cursoDeNegocios;
     List<String> listaDeCursosDoAluno;
+    @Captor
+    ArgumentCaptor<String> argumentCaptor;
 
     @BeforeEach
     void beforeEachMethod() {
         //Arrange /Given
-        cursoServiceMock = mock(CursoService.class);
-        cursoDeNegocios = new CursoDeNegocios(cursoServiceMock);
         listaDeCursosDoAluno = Arrays.asList(
                 "REST API's RESTFul do 0 à Azure com ASP.NET Core 5 e Docker",
                 "Agile Desmistificado com Scrum, XP, Kanban e Trello",
@@ -81,7 +90,7 @@ class CursoDeNegociosTest {
                 .willReturn(listaDeCursosDoAluno);
         String cursoAzure = "REST API's RESTFul do 0 à Azure com ASP.NET Core 5 e Docker";
         //passando o argumentCaptor que capturar os argumentos que sao passados como parametro
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+
         //When / Act
         cursoDeNegocios.deletarCursosQueNaoSaoRelacionadosASpringBoot("Rodrigo"); //esse método retorna void
 
